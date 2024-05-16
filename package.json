@@ -33,6 +33,7 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "ps-tree": "^1.2.0",
-    "python-shell": "^5.0.0"
+    "python-shell": "^5.0.0",
+    "winston": "^3.13.0"
   }
 }

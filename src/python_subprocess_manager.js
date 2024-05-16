@@ -32,6 +32,11 @@ class PythonSubprocessManager {
       process.env.NODE_ENV === "production" ? scriptPath : "python";
     const args = process.env.NODE_ENV === "production" ? [] : [scriptPath];
 
+    // Log paths for debugging
+    logInfo(`Starting Python subprocess. Environment: ${process.env.NODE_ENV}`);
+    logInfo(`Script path: ${scriptPath}`);
+    logInfo(`Python command: ${pythonCommand}`);
+
     // Check Python version for diagnostics
     execFile(pythonCommand, ["--version"], (error, stdout) => {
       if (error) {
@@ -74,7 +79,7 @@ class PythonSubprocessManager {
           }
         });
         this.subProcess = null;
-        console.log("Python subprocess and its children have been stopped.");
+        logInfo("Python subprocess and its children have been stopped.");
       });
     }
   }
