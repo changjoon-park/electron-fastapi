@@ -5,10 +5,10 @@
   "description": "My Electron application description",
   "main": "src/main.js",
   "scripts": {
-    "start": "electron-forge start",
-    "remove-build": "rm -rf build && rm -rf dist-python",
+    "start": "NODE_ENV=development electron-forge start",
+    "remove-build": "rm -rf build && rm -rf out-python",
     "py-package": "npm run remove-build && node src/package_python.js",
-    "package": "npm run py-package && electron-forge package",
+    "package": "NODE_ENV=production electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""

@@ -1,40 +1,36 @@
-// src/main/python_subprocess_manager.js
 const { spawn, execFile } = require("child_process");
 const path = require("path");
-const fs = require("fs");
 const psTree = require("ps-tree");
 const { logInfo, logError } = require("./logger");
 
 class PythonSubprocessManager {
   constructor() {
     this.subProcess = null;
-    this.PY_DIST_FOLDER = "dist-python";
+    this.PY_DIST_FOLDER = "out-python";
     this.PY_SRC_FOLDER = "backend";
     this.PY_MODULE = "run_app.py";
   }
 
-  isRunningInBundle() {
-    return fs.existsSync(path.join(__dirname, `../${this.PY_DIST_FOLDER}`));
-  }
-
   getPythonScriptPath() {
-    if (!this.isRunningInBundle()) {
-      return path.join(__dirname, `../${this.PY_SRC_FOLDER}`, this.PY_MODULE);
-    } else if (process.platform === "win32") {
-      return path.join(
-        __dirname,
-        `../${this.PY_DIST_FOLDER}`,
-        this.PY_MODULE.slice(0, -3) + ".exe"
-      );
-    } else {
-      return path.join(__dirname, `../${this.PY_DIST_FOLDER}`, this.PY_MODULE);
-    }
+    const isProduction = process.env.NODE_ENV === "production";
+    const distPath = path.join(
+      __dirname,
+      `../${this.PY_DIST_FOLDER}`,
+      this.PY_MODULE.slice(0, -3) + (process.platform === "win32" ? ".exe" : "")
+    );
+    const srcPath = path.join(
+      __dirname,
+      `../${this.PY_SRC_FOLDER}`,
+      this.PY_MODULE
+    );
+    return isProduction ? distPath : srcPath;
   }
 
   start() {
     const scriptPath = this.getPythonScriptPath();
-    const pythonCommand = this.isRunningInBundle() ? scriptPath : "python";
-    const args = this.isRunningInBundle() ? [] : [scriptPath];
+    const pythonCommand =
+      process.env.NODE_ENV === "production" ? scriptPath : "python";
+    const args = process.env.NODE_ENV === "production" ? [] : [scriptPath];
 
     // Check Python version for diagnostics
     execFile(pythonCommand, ["--version"], (error, stdout) => {
@@ -46,9 +42,10 @@ class PythonSubprocessManager {
     });
 
     // Start the Python subprocess
-    this.subProcess = this.isRunningInBundle()
-      ? execFile(scriptPath, args)
-      : spawn(pythonCommand, args);
+    this.subProcess =
+      process.env.NODE_ENV === "production"
+        ? execFile(scriptPath, args)
+        : spawn(pythonCommand, args);
     logInfo("Python subprocess started with script:", scriptPath);
 
     this.subProcess.stdout.on("data", (data) => {

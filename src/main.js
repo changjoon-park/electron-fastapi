@@ -43,7 +43,7 @@ app.whenReady().then(() => {
     })
     .catch((error) => {
       logError("Failed to wait for server to be ready:", error);
-      app.quit();
+      // app.quit();
     });
 
   // On OS X it's common to re-create a window in the app when the

@@ -3,7 +3,6 @@ const { FuseV1Options, FuseVersion } = require("@electron/fuses");
 
 module.exports = {
   packagerConfig: {
-    extraResources: ["dist-python/**/*"],
     asar: true,
   },
   rebuildConfig: {},

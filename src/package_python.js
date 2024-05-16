@@ -3,11 +3,7 @@ const { logInfo, logError } = require("./logger");
 
 // Function to build the Python application using PyInstaller
 function buildPythonApp() {
-  const pyInstallerArgs = [
-    "-w",
-    "--distpath dist-python",
-    "backend/run_app.py",
-  ];
+  const pyInstallerArgs = ["-w", "--distpath out-python", "backend/run_app.py"];
 
   const pyInstaller = spawn("pyinstaller", pyInstallerArgs, {
     shell: true,
