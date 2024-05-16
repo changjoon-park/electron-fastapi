@@ -1,5 +1,4 @@
 const { spawn } = require("child_process");
-const path = require("path");
 const { logInfo, logError } = require("./logger");
 
 // Function to build the Python application using PyInstaller

@@ -1,13 +1,14 @@
 {
-  "name": "electron-test",
-  "productName": "electron-test",
+  "name": "electron-fastapi",
+  "productName": "electron-fastapi",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "py-package": "CSC_IDENTITY_AUTO_DISCOVERY=false node src/package_python.js",
-    "package": "electron-forge package",
+    "remove-build": "rm -rf build && rm -rf dist-python",
+    "py-package": "npm run remove-build && node src/package_python.js",
+    "package": "npm run py-package && electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
