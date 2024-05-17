@@ -22,7 +22,14 @@ class PythonSubprocessManager {
     if (process.platform === "win32") {
       executablePath = path.join(baseDir, "run_app.exe"); // TODO: Check Windows executable
     } else if (process.platform === "darwin") {
-      executablePath = path.join(baseDir, "..", "Resources", "run_app.app"); // macOS executable path
+      executablePath = path.join(
+        baseDir,
+        "../Resources",
+        "run_app.app",
+        "Contents",
+        "MacOS",
+        "run_app"
+      ); // macOS executable path
     } else {
       executablePath = path.join(baseDir, "run_app"); // Fallback for other platforms
     }
@@ -53,27 +60,22 @@ class PythonSubprocessManager {
 
     try {
       logInfo("Starting Python subprocess...");
-      this.subProcess = isProduction
-        ? execFile(pythonCommand, args)
-        : spawn(pythonCommand, args);
+      this.subProcess = spawn(pythonCommand, args);
+      this.subProcess.stdout.on("data", (data) => {
+        logInfo(`Python subprocess stdout: ${data}`);
+      });
+
+      this.subProcess.stderr.on("data", (data) => {
+        logError(`Python subprocess stderr: ${data}`);
+      });
+
+      this.subProcess.on("close", (code) => {
+        logInfo(`Python subprocess exited with code ${code}`);
+        this.subProcess = null;
+      });
     } catch (error) {
       logError(`Error starting Python subprocess: ${error}`);
     }
-
-    logInfo(`Python subprocess started with script: ${scriptPath}`);
-
-    this.subProcess.stdout.on("data", (data) => {
-      logInfo(`Python subprocess stdout: ${data}`);
-    });
-
-    this.subProcess.stderr.on("data", (data) => {
-      logError(`Python subprocess stderr: ${data}`);
-    });
-
-    this.subProcess.on("close", (code) => {
-      logInfo(`Python subprocess exited with code ${code}`);
-      this.subProcess = null;
-    });
   }
 
   stop() {
