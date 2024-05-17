@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
+
+from backend.app.src import main
 
 # Create a router
 router = APIRouter(
@@ -11,4 +13,6 @@ router = APIRouter(
 
 @router.get("/", response_class=JSONResponse)
 async def read_root():
-    return {"message": "Hello World!!!!!!"}
+    message = main.check_connection()
+
+    return message

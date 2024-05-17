@@ -7,11 +7,9 @@
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
     "create-venv": "python -m venv .venv",
-    "remove-build": "rm -rf build && rm -rf out-python",
+    "remove-build": "rm -rf build && rm -rf out-python && rm -rf run_app.spec",
     "package-python": "npm run remove-build && node package_python.js",
     "package": "npm run package-python && electron-forge package && npm run remove-build",
-    "make": "npm run package-python && electron-forge make && npm run remove-build",
-    "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "devDependencies": {
