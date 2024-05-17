@@ -1,5 +1,11 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("node:path");
+
+// Set NODE_ENV to 'production' if not already set
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "production";
+}
+
 const PythonSubprocessManager = require("./python_subprocess_manager");
 const waitForServerReady = require("./server_check");
 const { logInfo, logError } = require("./logger");
@@ -43,7 +49,7 @@ app.whenReady().then(() => {
     })
     .catch((error) => {
       logError("Failed to wait for server to be ready:", error);
-      // app.quit();
+      app.quit();
     });
 
   // On OS X it's common to re-create a window in the app when the
@@ -59,6 +65,10 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+  process.on("exit", () => {
+    pythonManager.stop();
+  });
+
   if (process.platform !== "darwin") {
     app.quit();
   }
