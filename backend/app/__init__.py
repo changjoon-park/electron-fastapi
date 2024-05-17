@@ -27,9 +27,8 @@ def create_app() -> FastAPI:
 
     # Create the FastAPI application
     app = FastAPI(
-        title="Electron-FastAPI-Template",
-        description="A template for building Electron applications with FastAPI.",
-        version="0.1.0",
+        title="Electron-FastAPI",
+        description="Electron with FastAPI backend",
         lifespan=lifespan,
     )
     # Import and include the main router

@@ -1,4 +1,6 @@
 def check_connection():
-    message = "Success: Connection to Server (127.0.0.1:4040)"
+    status = "Success: Connection to Server"
+    ip = "127.0.0.1"
+    port = 4040
 
-    return {"message": message}
+    return {"status": status, "ip": ip, "port": port}

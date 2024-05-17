@@ -10,6 +10,7 @@
     "remove-build": "rm -rf build && rm -rf out-python && rm -rf run_app.spec",
     "package-python": "npm run remove-build && node package_python.js",
     "package": "npm run package-python && electron-forge package && npm run remove-build",
+    "test-server": "python backend/run_app.py",
     "lint": "echo \"No linting configured\""
   },
   "devDependencies": {

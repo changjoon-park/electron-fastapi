@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 
 from app.src import main
+from app.models import base
 
 # Create a router
 router = APIRouter(
@@ -14,5 +15,6 @@ router = APIRouter(
 @router.get("/", response_class=JSONResponse)
 async def read_root():
     message = main.check_connection()
+    data = base.ConnectionStatus(**message)
 
-    return message
+    return data
