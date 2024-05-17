@@ -3,8 +3,9 @@ const { createLogger, format, transports } = require("winston");
 const path = require("path");
 
 // Use the documents directory for logs
-const logDirectory = app.getPath("documents");
-const logFilePath = path.join(logDirectory, "app.log");
+const projectName = "electron-fastapi";
+const logDirectory = app.getPath("home");
+const logFilePath = path.join(logDirectory, `.${projectName}`, "app.log");
 
 const logger = createLogger({
   level: "info",

@@ -1,5 +1,4 @@
 const { spawn } = require("child_process");
-const { logInfo, logError } = require("./logger");
 
 // Function to build the Python application using PyInstaller
 function buildPythonApp() {
@@ -11,14 +10,14 @@ function buildPythonApp() {
   });
 
   pyInstaller.on("error", (err) => {
-    logError(`Failed to start PyInstaller process: ${err}`);
+    console.log(`Failed to start PyInstaller process: ${err}`);
   });
 
   pyInstaller.on("close", (code) => {
     if (code === 0) {
-      logInfo("PyInstaller completed successfully.");
+      console.log("PyInstaller completed successfully.");
     } else {
-      logError(`PyInstaller exited with code ${code}.`);
+      console.log(`PyInstaller exited with code ${code}.`);
     }
   });
 }

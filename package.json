@@ -6,10 +6,11 @@
   "main": "src/main.js",
   "scripts": {
     "start": "NODE_ENV=development electron-forge start",
+    "create-venv": "python -m venv .venv",
     "remove-build": "rm -rf build && rm -rf out-python",
-    "py-package": "npm run remove-build && node src/package_python.js",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
+    "package-python": "npm run remove-build && node package_python.js",
+    "package": "npm run package-python && electron-forge package && npm run remove-build",
+    "make": "npm run package-python && electron-forge make && npm run remove-build",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
@@ -24,7 +25,11 @@
     "@electron/fuses": "^1.8.0",
     "electron": "30.0.3"
   },
-  "keywords": [],
+  "keywords": [
+    "Electron",
+    "FastAPI",
+    "Python"
+  ],
   "author": {
     "name": "changjoon-park",
     "email": "sisyphus9402@gmail.com"
