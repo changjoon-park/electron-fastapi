@@ -61,22 +61,20 @@ app.whenReady().then(() => {
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// This is called when all windows are closed and should handle app exit for non-macOS platforms.
 app.on("window-all-closed", () => {
-  process.on("exit", () => {
-    pythonManager.stop();
-  });
-
   if (process.platform !== "darwin") {
-    app.quit();
+    app.quit(); // This triggers 'before-quit'
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+// Ensures all subprocesses are terminated before the app completely quits.
+app.on("before-quit", () => {
+  pythonManager.stop(); // Clean up Python subprocesses.
+});
 
-process.on("exit", () => {
+// Clean up Python subprocesses before quitting the app.
+app.on("quit", () => {
   pythonManager.stop();
+  logInfo("Application is quitting. Goodbye!");
 });

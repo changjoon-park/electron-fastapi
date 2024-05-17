@@ -44,7 +44,9 @@ class PythonSubprocessManager {
     const pythonCommand = isProduction ? scriptPath : "python";
     const args = isProduction ? [] : [scriptPath];
 
-    logInfo(`Starting Python subprocess. Environment: ${process.env.NODE_ENV}`);
+    logInfo(
+      `Attempting to start Python subprocess. Environment: ${process.env.NODE_ENV}`
+    );
     logInfo(`Script path: ${scriptPath}`);
     logInfo(`Python command: ${pythonCommand}`);
 
@@ -60,7 +62,10 @@ class PythonSubprocessManager {
 
     try {
       logInfo("Starting Python subprocess...");
+
       this.subProcess = spawn(pythonCommand, args);
+      logInfo(`Python subprocess started with PID: ${this.subProcess.pid}`);
+
       this.subProcess.stdout.on("data", (data) => {
         logInfo(`Python subprocess stdout: ${data}`);
       });
@@ -75,24 +80,39 @@ class PythonSubprocessManager {
       });
     } catch (error) {
       logError(`Error starting Python subprocess: ${error}`);
+      this.subProcess = null;
     }
   }
 
   stop() {
-    if (this.subProcess) {
-      const pid = this.subProcess.pid;
-      psTree(pid, (err, children) => {
-        [pid].concat(children.map((p) => p.PID)).forEach((tpid) => {
-          try {
-            process.kill(tpid, "SIGTERM");
-          } catch (error) {
-            logError(`Failed to kill process ${tpid}:`, error);
-          }
-        });
-        this.subProcess = null;
-        logInfo("Python subprocess and its children have been stopped.");
-      });
+    if (!this.subProcess) {
+      logInfo("No subprocess to stop.");
+      return;
     }
+
+    const pid = this.subProcess.pid;
+    if (!pid) {
+      logInfo("Subprocess has no PID, may have already stopped.");
+      return;
+    }
+
+    try {
+      // Attempt graceful shutdown
+      process.kill(pid, "SIGTERM");
+      logInfo(`Sent SIGTERM to Python subprocess with PID: ${pid}`);
+
+      // Set a timeout to forcefully terminate the process if it doesn't exit
+      setTimeout(() => {
+        if (this.subProcess && !this.subProcess.killed) {
+          process.kill(pid, "SIGKILL");
+          logInfo(`Sent SIGKILL to Python subprocess with PID: ${pid}`);
+        }
+      }, 5000); // Wait 5 seconds before sending SIGKILL
+    } catch (ex) {
+      logError("Failed to kill process", pid, ex);
+    }
+
+    this.subProcess = null; // Clear the subprocess reference
   }
 }
 
